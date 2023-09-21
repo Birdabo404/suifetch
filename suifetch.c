@@ -5,20 +5,12 @@
 #include <sys/time.h>
 
 int main(void) {
-
-    struct timeval start, end;
-    double elapsed_time;
-
-    gettimeofday(&start, NULL);
-
-
 	//ascii logo || ADD YOUR OWN ASCII IF YOU WANT.
 	const char* ascii_cat = 
         " /\\_/\\  \n"
         "( o.o ) \n"
         " > ^ <  \n";
 
-    // Print the ASCII cat
     printf("\e[33m%s\x1b[0m", ascii_cat); 
 
     // Open the /etc/os-release file to read the Distro name of your sys.
@@ -30,23 +22,20 @@ int main(void) {
 
     char line[256];
     char os_name[256] = "";
-    char os_version[256] = "";
 
-    //Reading the file linexline.
+    //Reading the file line x line.
     while (fgets(line, sizeof(line), os_release_file)) {
 	    // checks for  specific lines containing OS/Version & info.
 	    if(strncmp(line, "PRETTY_NAME=", 12) == 0) {
 		    sscanf(line, "PRETTY_NAME=\"%[^\"]\"", os_name);
-	    } else if (strncmp(line, "VERSION=", 8) == 0) {
-		    sscanf(line, "VERSION=\"%[^\"]\"", os_version);
     } 
 }
     // Close the file
     fclose(os_release_file);
 
     //print the OS and version INFO.
-    if(strlen(os_name) > 0 && strlen(os_version) > 0) {
-		printf("\n\e[36mOS:\e[0m %s %s", os_name, os_version);
+    if(strlen(os_name) > 0 ) {
+		printf("\n\e[36mos:\e[0m %s", os_name);
 	} else{
 		printf("OS Information not available!");
 	}
@@ -89,11 +78,6 @@ int main(void) {
 
     int hours = (int)(uptime_seconds / 3600);
     int minutes = ((int)uptime_seconds % 3600) / 60;
-    printf("\x1b[34mUptime:\x1b[0m %d hours, %d mins\n", hours, minutes);
-
-    gettimeofday(&end, NULL);
-    elapsed_time = (end.tv_sec - start.tv_sec) + (end.tv_usec - start.tv_usec) / 1000000.0;
-    printf("\x1b[33mTT:\x1b[0m \e[5m%f\e[0m\n", elapsed_time);
-
+    printf("\x1b[34muptime:\x1b[0m %d hours, %d mins\n", hours, minutes);
     return 0;
 }
