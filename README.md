@@ -15,7 +15,8 @@ $ ./suifetch
 ```
 ## Preview
 
+![preview](https://i.imgur.com/yMPPBtk.png)
 
 ## License
 
-This project is licensed under the [MIT License](LICENSE).
+This project is licensed under the [MIT License](https://opensource.org/license/mit/).
