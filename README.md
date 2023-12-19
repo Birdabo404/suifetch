@@ -1,6 +1,5 @@
 # suifetch
-A simple, fast and minimalist system info display written in C. 
-- forked and improved from tinyfetch. 
+A minimal, and very fast system info display written in C. 
 
 ## Depends
 * GCC: You need a C compiler like GCC to compile the C source code.
