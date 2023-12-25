@@ -55,26 +55,16 @@ int main(void) {
         }
     }
 
-    // Fetching the window manager name
-if (SHOW_WM == 1) {
-    Display* display = XOpenDisplay(NULL);
-    if (display != NULL) {
-        Window root = DefaultRootWindow(display);
-
-        // Try to get the window manager name using XFetchName
-        char* wm_name = NULL;
-        if (XFetchName(display, root, &wm_name) != 0) {
-            printf("\x1b[35mwm:\x1b[0m %s\n", wm_name);
-            XFree(wm_name);
+    // Fetching the window manager name || trying to get bspwm as WM to work
+    if (SHOW_WM == 1) {
+        const char* bspwm_display = getenv("BSPWM_DISPLAY");
+        if (bspwm_display != NULL) {
+            printf("\x1b[35mwm:\x1b[0m %s (BSPWM)\n", bspwm_display);
         } else {
             printf("Window Manager information not available.\n");
         }
-
-        XCloseDisplay(display);
-    } else {
-        perror("Failed to open X display");
     }
-}
+
     if (SHOW_TERM == 1) {
         char* term = getenv("TERM");
         if (term != NULL) {
