@@ -3,6 +3,7 @@
 #include <string.h>
 #include "config.h"
 #include <sys/time.h>
+#include <X11/Xlib.h>
 
 int main(void) {
 	//ascii logo || ADD YOUR OWN ASCII IF YOU WANT.
@@ -33,7 +34,7 @@ int main(void) {
     // Close the file
     fclose(os_release_file);
 
-    //print the OS and version INFO.
+    //prints the OS and version INFO.
     if(strlen(os_name) > 0 ) {
 		printf("\n\e[36mos:\e[0m %s", os_name);
 	} else{
@@ -48,11 +49,24 @@ int main(void) {
         }else {
             perror("Failed to fetch data.");
         }
-    if(SHOW_SHELL == 1) {
-        char* shell = getenv("SHELL");
-            if(shell != NULL){
-                printf("\x1b[33msh:\x1b[0m %s \n", getenv("SHELL"));
+    if (SHOW_WM == 1) {
+        Display* display = XOpenDisplay(NULL);
+        if (display != NULL) {
+            Window root = DefaultRootWindow(display);
+            XTextProperty wm_name_prop;
+
+            if (XGetWMName(display, root, &wm_name_prop) != 0 && wm_name_prop.value != NULL) {
+                printf("\x1b[35mwm,:\x1b[0m %s\n", (char*)wm_name_prop.value);
+                XFree(wm_name_prop.value);
+            } else {
+                printf("Window Manager information not available.\n");
             }
+
+            XCloseDisplay(display);
+        } else {
+            perror("Failed to open X display");
+        }
+    }
         }
      if(SHOW_TERM == 1){
         char* term = getenv("TERM");
@@ -78,6 +92,6 @@ int main(void) {
 
     int hours = (int)(uptime_seconds / 3600);
     int minutes = ((int)uptime_seconds % 3600) / 60;
-    printf("\x1b[34muptime:\x1b[0m %d hours, %d mins\n", hours, minutes);
+    printf("\x1b[34mup:\x1b[0m %d hours, %d mins\n", hours, minutes);
     return 0;
 }
