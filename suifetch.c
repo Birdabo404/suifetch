@@ -3,76 +3,64 @@
 #include <string.h>
 #include "config.h"
 #include <sys/time.h>
-#include <X11/Xlib.h>
-#include <X11/Xutil.h>
-#include <X11/Xatom.h>
-
 
 int main(void) {
-    // ASCII logo || ADD YOUR OWN ASCII IF YOU WANT.
-    const char* ascii_cat =
+	//ascii logo || ADD YOUR OWN ASCII IF YOU WANT.
+	const char* ascii_cat = 
         " /\\_/\\  \n"
         "( o.o ) \n"
         " > ^ <  \n";
 
-    printf("\e[33m%s\x1b[0m", ascii_cat);
+    printf("\e[33m%s\x1b[0m", ascii_cat); 
 
     // Open the /etc/os-release file to read the Distro name of your sys.
     FILE* os_release_file = fopen("/etc/os-release", "r");
-    if (os_release_file == NULL) {
-        perror("Failed to fetch OS-NAME");
-        return 1;
-    }
+    if(os_release_file == NULL){
+	    perror("Failed to fetch OS-NAME");
+	    return 1;
+	}
 
     char line[256];
     char os_name[256] = "";
 
-    // Reading the file line by line.
+    //Reading the file line x line.
     while (fgets(line, sizeof(line), os_release_file)) {
-        // Checks for specific lines containing OS/Version & info.
-        if (strncmp(line, "PRETTY_NAME=", 12) == 0) {
-            sscanf(line, "PRETTY_NAME=\"%[^\"]\"", os_name);
-        }
-    }
-
+	    // checks for  specific lines containing OS/Version & info.
+	    if(strncmp(line, "PRETTY_NAME=", 12) == 0) {
+		    sscanf(line, "PRETTY_NAME=\"%[^\"]\"", os_name);
+    } 
+}
     // Close the file
     fclose(os_release_file);
 
-    // Prints the OS and version INFO.
-    if (strlen(os_name) > 0) {
-        printf("\n\e[36mos:\e[0m %s", os_name);
-    } else {
-        printf("OS Information not available!");
-    }
+    //print the OS and version INFO.
+    if(strlen(os_name) > 0 ) {
+		printf("\n\e[36mos:\e[0m %s", os_name);
+	} else{
+		printf("OS Information not available!");
+	}
 
     // Fetching the username of your sys.
-    if (SHOW_USER == 1) {
+    if(SHOW_USER == 1) {
         char* username = getenv("USER");
-        if (username != NULL)
+        if(username != NULL)
             printf("\n\e[31muser:\e[0m %s\n", username);
-        else {
-            perror("Failed to fetch user data.");
+        }else {
+            perror("Failed to fetch data.");
         }
-    }
-
-    // Fetching the window manager name || trying to get bspwm as WM to work
-    if (SHOW_WM == 1) {
-        const char* bspwm_display = getenv("BSPWM_DISPLAY");
-        if (bspwm_display != NULL) {
-            printf("\x1b[35mwm:\x1b[0m %s (BSPWM)\n", bspwm_display);
-        } else {
-            printf("wm: N/A\n");
+    if(SHOW_SHELL == 1) {
+        char* shell = getenv("SHELL");
+            if(shell != NULL){
+                printf("\x1b[33msh:\x1b[0m %s \n", getenv("SHELL"));
+            }
         }
-    }
-
-    if (SHOW_TERM == 1) {
+     if(SHOW_TERM == 1){
         char* term = getenv("TERM");
-        if (term != NULL) {
-            printf("\x1b[32mterm:\x1b[0m %s \n", getenv("TERM"));
-        }
-    }
-
-    // Fetching the uptime of your sys.
+        if(term != NULL) {
+                printf("\x1b[32mterm:\x1b[0m %s \n", getenv("TERM"));
+            }
+       }
+    // Fetching the uptime of your sys. Please let me know if there's a better way to calculate the uptime detail.
     FILE* uptime_file = fopen("/proc/uptime", "r");
     if (uptime_file == NULL) {
         perror("Failed to open /proc/uptime");
@@ -90,7 +78,6 @@ int main(void) {
 
     int hours = (int)(uptime_seconds / 3600);
     int minutes = ((int)uptime_seconds % 3600) / 60;
-    printf("\x1b[34mup:\x1b[0m %d hours, %d mins\n", hours, minutes);
-
+    printf("\x1b[34muptime:\x1b[0m %d hours, %d mins\n", hours, minutes);
     return 0;
 }
