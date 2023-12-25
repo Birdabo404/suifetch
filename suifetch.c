@@ -4,6 +4,7 @@
 #include "config.h"
 #include <sys/time.h>
 #include <X11/Xlib.h>
+#include <X11/Xutil.h>
 
 int main(void) {
     // ASCII logo || ADD YOUR OWN ASCII IF YOU WANT.
