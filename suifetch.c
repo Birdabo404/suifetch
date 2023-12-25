@@ -61,7 +61,7 @@ int main(void) {
         if (bspwm_display != NULL) {
             printf("\x1b[35mwm:\x1b[0m %s (BSPWM)\n", bspwm_display);
         } else {
-            printf("Window Manager information not available.\n");
+            printf("wm: N/A\n");
         }
     }
 
