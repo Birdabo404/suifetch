@@ -5,6 +5,8 @@
 #include <sys/time.h>
 #include <X11/Xlib.h>
 #include <X11/Xutil.h>
+#include <X11/Xatom.h>
+
 
 int main(void) {
     // ASCII logo || ADD YOUR OWN ASCII IF YOU WANT.
@@ -54,25 +56,25 @@ int main(void) {
     }
 
     // Fetching the window manager name
-    if (SHOW_WM == 1) {
-        Display* display = XOpenDisplay(NULL);
-        if (display != NULL) {
-            Window root = DefaultRootWindow(display);
-            XTextProperty wm_name_prop;
+if (SHOW_WM == 1) {
+    Display* display = XOpenDisplay(NULL);
+    if (display != NULL) {
+        Window root = DefaultRootWindow(display);
 
-            if (XGetWMName(display, root, &wm_name_prop) != 0 && wm_name_prop.value != NULL) {
-                printf("\x1b[35mwm:\x1b[0m %s\n", (char*)wm_name_prop.value);
-                XFree(wm_name_prop.value);
-            } else {
-                printf("Window Manager information not available.\n");
-            }
-
-            XCloseDisplay(display);
+        // Try to get the window manager name using XFetchName
+        char* wm_name = NULL;
+        if (XFetchName(display, root, &wm_name) != 0) {
+            printf("\x1b[35mwm:\x1b[0m %s\n", wm_name);
+            XFree(wm_name);
         } else {
-            perror("Failed to open X display");
+            printf("Window Manager information not available.\n");
         }
-    }
 
+        XCloseDisplay(display);
+    } else {
+        perror("Failed to open X display");
+    }
+}
     if (SHOW_TERM == 1) {
         char* term = getenv("TERM");
         if (term != NULL) {
