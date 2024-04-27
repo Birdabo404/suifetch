@@ -1,7 +1,7 @@
 # suifetch
 A minimal, and very fast system info display written in C. 
 
-## Depends
+## Dependencies
 * GCC: You need a C compiler like GCC to compile the C source code.
 * enviromental variables: `USER`, `TERM`, `SHELL`
 
