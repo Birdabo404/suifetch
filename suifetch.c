@@ -4,13 +4,14 @@
 #include "config.h"
 #include <sys/time.h>
 
+//ew 
 int main() {
-	const char* ascii_cat = 
+	const char *ascii_cat = 
         " /\\_/\\  \n"
         "( o.o ) \n"
         " > ^ <  \n";
 
-    const char* ascii_error_cat = 
+    const char *ascii_error_cat = 
         "\033[1;33mß/\\_/\\      \033[0;31mOops!\033[0m    \n"
         "\033[1;33m ( o.o )    \033[0;31mError 404\033[0m  \n"
         "\033[1;33m  > ^ <      \033[0;31mNot Found\033[0m \n";
@@ -18,8 +19,8 @@ int main() {
         
     printf("\e[33m%s\x1b[0m", ascii_cat); 
 
-    // Open the /etc/os-release file to read the Distro name of your sys.
-    // edit to work in mac
+    // file path for reading linux distros - `/etc/os-release` 
+    // edit to work in mac - will fix to work both in linux and macos soon when i have time. 
     FILE *OS_INFO = fopen("/System/Library/CoreServices/SystemVersion.plist", "r");
     if( OS_INFO == NULL){
         system("clear");
@@ -31,24 +32,19 @@ int main() {
     char line[256];
     char os_name[256] = "";
 
-    //Reading the file line x line.
     while (fgets(line, sizeof(line), OS_INFO)) {
 	    if(strncmp(line, "PRETTY_NAME=", 12) == 0) {
 		    sscanf(line, "PRETTY_NAME=\"%[^\"]\"", os_name);
     } 
 }
-    // Close the file
     fclose(OS_INFO);
 
-
-    //print the OS and version INFO.
     if(strlen(os_name) > 0 ) {
 		printf("\n\e[36mos:\e[0m %s", os_name);
 	} else{
 		printf("OS Information not available!");
 	}
 
-    // Fetching the username of your sys.
     if(SHOW_USER == 1) {
         char* username = getenv("USER");
         if(username != NULL)
@@ -68,11 +64,13 @@ int main() {
                 printf("\x1b[32mterm:\x1b[0m %s \n", getenv("TERM"));
             }
        }
-    // Fetching the uptime of your sys. Please let me know if there's a better way to calculate the uptime detail.
+
+    // Fetch the uptime. 
+    // Calculate better for effiency idiot - will update soon.
     FILE* uptime_file = fopen("/proc/uptime", "r");
     if (uptime_file == NULL) {
-        perror("Failed to open /proc/uptime");
-        printf("\n>> Uptime needs updating, currently learning macos.");
+        perror(">> Failed to open /proc/uptime");
+        printf("\n>> Uptime needs updating, currently learning macos.\n");
         return 1;
     }
 
@@ -90,3 +88,5 @@ int main() {
     printf("\x1b[34muptime:\x1b[0m %d hours, %d mins\n", hours, minutes);
     return 0;
 }
+
+//Ai were used to generate some of the code - will fully rewrite soon. 
