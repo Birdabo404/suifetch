@@ -4,19 +4,27 @@
 #include "config.h"
 #include <sys/time.h>
 
-int main(void) {
-	//ascii logo || ADD YOUR OWN ASCII IF YOU WANT.
+int main() {
 	const char* ascii_cat = 
         " /\\_/\\  \n"
         "( o.o ) \n"
         " > ^ <  \n";
 
+    const char* ascii_error_cat = 
+        "\033[1;33mß/\\_/\\      \033[0;31mOops!\033[0m    \n"
+        "\033[1;33m ( o.o )    \033[0;31mError 404\033[0m  \n"
+        "\033[1;33m  > ^ <      \033[0;31mNot Found\033[0m \n";
+       
+        
     printf("\e[33m%s\x1b[0m", ascii_cat); 
 
     // Open the /etc/os-release file to read the Distro name of your sys.
-    FILE* os_release_file = fopen("/etc/os-release", "r");
-    if(os_release_file == NULL){
-	    perror("Failed to fetch OS-NAME");
+    // edit to work in mac
+    FILE *OS_INFO = fopen("/System/Library/CoreServices/SystemVersion.plist", "r");
+    if( OS_INFO == NULL){
+        system("clear");
+        printf(" %s", ascii_error_cat);
+	    perror(">> Failed to retrieve OS name. ");
 	    return 1;
 	}
 
@@ -24,14 +32,14 @@ int main(void) {
     char os_name[256] = "";
 
     //Reading the file line x line.
-    while (fgets(line, sizeof(line), os_release_file)) {
-	    // checks for  specific lines containing OS/Version & info.
+    while (fgets(line, sizeof(line), OS_INFO)) {
 	    if(strncmp(line, "PRETTY_NAME=", 12) == 0) {
 		    sscanf(line, "PRETTY_NAME=\"%[^\"]\"", os_name);
     } 
 }
     // Close the file
-    fclose(os_release_file);
+    fclose(OS_INFO);
+
 
     //print the OS and version INFO.
     if(strlen(os_name) > 0 ) {
@@ -64,6 +72,7 @@ int main(void) {
     FILE* uptime_file = fopen("/proc/uptime", "r");
     if (uptime_file == NULL) {
         perror("Failed to open /proc/uptime");
+        printf("\n>> Uptime needs updating, currently learning macos.");
         return 1;
     }
 
