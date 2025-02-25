@@ -5,11 +5,13 @@
 #include <sys/time.h>
 
 const char *ascii_cat = 
-" /\\_/\\  \n"
+"\n"
+" /\\_/\\  hello! \n"
 "( o.o ) \n"
 " > ^ <  \n";
 
 const char *ascii_error_cat = 
+"\n"
 "\033[1;33mß/\\_/\\      \033[0;31mOops!\033[0m    \n"
 "\033[1;33m ( o.o )    \033[0;31mError 404\033[0m  \n"
 "\033[1;33m  > ^ <      \033[0;31mNot Found\033[0m \n";
