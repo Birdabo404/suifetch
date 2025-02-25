@@ -4,46 +4,64 @@
 #include "config.h"
 #include <sys/time.h>
 
-//ew 
-int main() {
-	const char *ascii_cat = 
-        " /\\_/\\  \n"
-        "( o.o ) \n"
-        " > ^ <  \n";
+const char *ascii_cat = 
+" /\\_/\\  \n"
+"( o.o ) \n"
+" > ^ <  \n";
 
-    const char *ascii_error_cat = 
-        "\033[1;33mß/\\_/\\      \033[0;31mOops!\033[0m    \n"
-        "\033[1;33m ( o.o )    \033[0;31mError 404\033[0m  \n"
-        "\033[1;33m  > ^ <      \033[0;31mNot Found\033[0m \n";
-       
-        
-    printf("\e[33m%s\x1b[0m", ascii_cat); 
+const char *ascii_error_cat = 
+"\033[1;33mß/\\_/\\      \033[0;31mOops!\033[0m    \n"
+"\033[1;33m ( o.o )    \033[0;31mError 404\033[0m  \n"
+"\033[1;33m  > ^ <      \033[0;31mNot Found\033[0m \n";
 
-    // file path for reading linux distros - `/etc/os-release` 
-    // edit to work in mac - will fix to work both in linux and macos soon when i have time. 
-    FILE *OS_INFO = fopen("/System/Library/CoreServices/SystemVersion.plist", "r");
-    if( OS_INFO == NULL){
-        system("clear");
+char os_name[256] = ""; 
+
+
+int OS_INFO(){
+    FILE *opSysInfo; 
+    opSysInfo = fopen("/System/Library/CoreServices/SystemVersion.plist", "r");
+
+    if(opSysInfo == NULL){
+        system("clear");        
         printf(" %s", ascii_error_cat);
-	    perror(">> Failed to retrieve OS name. ");
-	    return 1;
-	}
+        perror(">> Failed to retrieve OS name. ");
+        return 1;
+    }
 
     char line[256];
-    char os_name[256] = "";
+    int product_name_next = 0; 
 
-    while (fgets(line, sizeof(line), OS_INFO)) {
-	    if(strncmp(line, "PRETTY_NAME=", 12) == 0) {
-		    sscanf(line, "PRETTY_NAME=\"%[^\"]\"", os_name);
-    } 
+    while(fgets(line, sizeof(line), opSysInfo)){
+        if(strstr(line, "<key>ProductName</key>") != NULL){
+            product_name_next = 1; 
+            continue; 
+        }
+
+        if(product_name_next && strstr(line, "<string>") != NULL){
+            char *start = strstr(line, "<string>") + 8;
+            char *end = strstr(line, "</string>");
+
+            if(start && end){
+                int length = end - start;
+                strncpy(os_name, start, length);
+                os_name[length] = '\0';
+                break;
+            }
+        }
+    }
+    fclose(opSysInfo);
+    return 0;
 }
-    fclose(OS_INFO);
 
-    if(strlen(os_name) > 0 ) {
-		printf("\n\e[36mos:\e[0m %s", os_name);
-	} else{
-		printf("OS Information not available!");
-	}
+int main() { 
+        
+    printf("\e[33m%s\x1b[0m", ascii_cat); 
+    
+    if(OS_INFO() == 0 && strlen(os_name) > 0) {
+        printf("\n\e[36mos:\e[0m %s", os_name);
+    } else {
+        printf("OS Information not available!\n");
+    }
 
     if(SHOW_USER == 1) {
         char* username = getenv("USER");
@@ -70,7 +88,7 @@ int main() {
     FILE* uptime_file = fopen("/proc/uptime", "r");
     if (uptime_file == NULL) {
         perror(">> Failed to open /proc/uptime");
-        printf("\n>> Uptime needs updating, currently learning macos.\n");
+        printf("\n\e[31m>> Uptime needs updating, currently learning macos.\n");
         return 1;
     }
 
