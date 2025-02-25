@@ -18,7 +18,6 @@ const char *ascii_error_cat =
 
 char os_name[256] = ""; 
 
-
 int OS_INFO(){
     FILE *opSysInfo; 
     opSysInfo = fopen("/System/Library/CoreServices/SystemVersion.plist", "r");
@@ -55,6 +54,24 @@ int OS_INFO(){
     return 0;
 }
 
+int get_uptime() {
+    FILE *fp;
+    char buffer[256];
+
+    fp = popen("uptime", "r");
+    if (fp == NULL) {
+        perror("Failed to run uptime command");
+        return 1;
+    }
+
+    if (fgets(buffer, sizeof(buffer), fp) != NULL) {
+        printf("\x1b[34muptime:\x1b[0m %s\n", buffer);
+    }
+
+    pclose(fp);
+    return 0;
+}
+
 int main() { 
         
     printf("\e[33m%s\x1b[0m", ascii_cat); 
@@ -64,7 +81,7 @@ int main() {
     } else {
         printf("OS Information not available!\n");
     }
-
+    
     if(SHOW_USER == 1) {
         char* username = getenv("USER");
         if(username != NULL)
@@ -85,28 +102,21 @@ int main() {
             }
        }
 
-    // Fetch the uptime. 
-    // Calculate better for effiency idiot - will update soon.
-    FILE* uptime_file = fopen("/proc/uptime", "r");
-    if (uptime_file == NULL) {
-        perror(">> Failed to open /proc/uptime");
-        printf("\n\e[31m>> Uptime needs updating, currently learning macos.\n");
-        return 1;
-    }
+    get_uptime(); // temporary lol 
 
-    int uptime_seconds;
-    if (fscanf(uptime_file, "%d", &uptime_seconds) != 1) {
-        perror("Failed to read uptime from /proc/uptime");
-        fclose(uptime_file);
-        return 1;
-    }
+    /*
+    wtf is this.
+    boottime=`sysctl -n kern.boottime | awk '{print $4}' | sed 's/,//g'`
+    unixtime=`date +%s`
+    timeAgo=$(($unixtime - $boottime))
+    uptime=`awk -v time=$timeAgo 'BEGIN { seconds = time % 60; minutes = int(time / 60 % 60); hours = int(time / 60 / 60 % 24); days = int(time / 60 / 60 / 24); printf("%.0f days, %.0f hours, %.0f minutes, %.0f seconds", days, hours, minutes, seconds); exit }'`
+    echo $uptime
 
-    fclose(uptime_file);
+    someone help me convert this to up-time T-T
+    */
 
-    int hours = (int)(uptime_seconds / 3600);
-    int minutes = ((int)uptime_seconds % 3600) / 60;
-    printf("\x1b[34muptime:\x1b[0m %d hours, %d mins\n", hours, minutes);
     return 0;
+
 }
 
 //Ai were used to generate some of the code - will fully rewrite soon. 
