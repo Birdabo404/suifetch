@@ -20,29 +20,25 @@ const char *ascii_error_cat =
 char os_name[256] = ""; 
 
 int OS_INFO(){
-    FILE *opSysInfo; 
+    FILE *opSysInfo;
+#if defined(__APPLE__)
     opSysInfo = fopen("/System/Library/CoreServices/SystemVersion.plist", "r");
-
     if(opSysInfo == NULL){
         system("clear");        
         printf(" %s", ascii_error_cat);
         perror(">> Failed to retrieve OS name. ");
         return 1;
     }
-
     char line[256];
     int product_name_next = 0; 
-
     while(fgets(line, sizeof(line), opSysInfo)){
         if(strstr(line, "<key>ProductName</key>") != NULL){
             product_name_next = 1; 
             continue; 
         }
-
         if(product_name_next && strstr(line, "<string>") != NULL){
             char *start = strstr(line, "<string>") + 8;
             char *end = strstr(line, "</string>");
-
             if(start && end){
                 int length = end - start;
                 strncpy(os_name, start, length);
@@ -53,6 +49,34 @@ int OS_INFO(){
     }
     fclose(opSysInfo);
     return 0;
+#elif defined(__linux__)
+    opSysInfo = fopen("/etc/os-release", "r");
+    if(opSysInfo == NULL){
+        system("clear");        
+        printf(" %s", ascii_error_cat);
+        perror(">> Failed to retrieve OS name. ");
+        return 1;
+    }
+    char line[256];
+    while(fgets(line, sizeof(line), opSysInfo)){
+        if(strncmp(line, "PRETTY_NAME=", 12) == 0){
+            char *start = strchr(line, '"');
+            char *end = strrchr(line, '"');
+            if(start && end && end > start){
+                int length = end - start - 1;
+                strncpy(os_name, start + 1, length);
+                os_name[length] = '\0';
+                break;
+            }
+        }
+    }
+    fclose(opSysInfo);
+    return 0;
+#else
+    // Unsupported OS
+    strcpy(os_name, "Unknown OS");
+    return 1;
+#endif
 }
 
 int get_uptime() {
