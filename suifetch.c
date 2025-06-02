@@ -123,28 +123,7 @@ int main() {
      if(SHOW_TERM == 1){
         char* term = getenv("TERM");
         if(term != NULL) {
-            // Get the terminal application name
-            FILE *fp;
-            char buffer[256];
-            fp = popen("ps -p $PPID -o comm= | tr -d '\n'", "r");
-            if (fp != NULL) {
-                if (fgets(buffer, sizeof(buffer), fp) != NULL) {
-                    // If it's a shell, try to get the actual terminal app
-                    if (strstr(buffer, "zsh") || strstr(buffer, "bash") || strstr(buffer, "sh")) {
-                        pclose(fp);
-                        fp = popen("ps -p $PPID -o ppid= | xargs ps -p -o comm= | tr -d '\n'", "r");
-                        if (fp != NULL) {
-                            if (fgets(buffer, sizeof(buffer), fp) != NULL) {
-                                printf("\x1b[32mterm:\x1b[0m %s \n", buffer);
-                            }
-                            pclose(fp);
-                        }
-                    } else {
-                        printf("\x1b[32mterm:\x1b[0m %s \n", buffer);
-                        pclose(fp);
-                    }
-                }
-            }
+            printf("\x1b[32mterm:\x1b[0m %s \n", term);
         }
     }
 
