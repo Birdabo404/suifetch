@@ -4,8 +4,7 @@ A minimal, and very fast system info display written in C.
 ## Dependencies
 * GCC: You need a C compiler like GCC to compile the C source code.
 * enviromental variables: `USER`, `TERM`, `SHELL`
-* ~~Linux System. Does not work in `MacOS` or `Windows`.~~
-* This project is moving to `MacOS`
+* This project now works with `Linux` & `macOS` systems.
 
 ## 🔧 Installation
 
